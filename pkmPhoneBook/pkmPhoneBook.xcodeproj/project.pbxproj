@@ -7,46 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		69EF9B682E86676200D5AB9A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69EF9B5D2E86676200D5AB9A /* MainViewController.swift */; };
-		69EF9B6C2E86676200D5AB9A /* View in Resources */ = {isa = PBXBuildFile; fileRef = 69EF9B642E86676200D5AB9A /* View */; };
 		69EF9B8C2E866AB500D5AB9A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 69EF9B8B2E866AB500D5AB9A /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		693A111C2E86643C0053A637 /* pkmPhoneBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pkmPhoneBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		69EF9B5D2E86676200D5AB9A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		69EF9B642E86676200D5AB9A /* View */ = {isa = PBXFileReference; lastKnownFileType = folder; path = View; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		69EF9B872E8667CC00D5AB9A /* Exceptions for " Resource" folder in "pkmPhoneBook" target */ = {
+		69EF9BCB2E86875C00D5AB9A /* Exceptions for "pkmPhoneBook" folder in "pkmPhoneBook" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"/Localized: LaunchScreen.storyboard",
-				Assets.xcassets,
-				Info.plist,
+				App/AppDelegate.swift,
+				App/SceneDelegate.swift,
+				Controller/MainViewController.swift,
+				View/TableViewCell.swift,
 			);
 			target = 693A111B2E86643C0053A637 /* pkmPhoneBook */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		69EF9B6F2E8667AE00D5AB9A /* Model */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Model;
-			sourceTree = "<group>";
-		};
-		69EF9B862E8667CC00D5AB9A /*  Resource */ = {
+		69EF9BC42E86875B00D5AB9A /* pkmPhoneBook */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				69EF9B872E8667CC00D5AB9A /* Exceptions for " Resource" folder in "pkmPhoneBook" target */,
+				69EF9BCB2E86875C00D5AB9A /* Exceptions for "pkmPhoneBook" folder in "pkmPhoneBook" target */,
 			);
-			path = " Resource";
-			sourceTree = "<group>";
-		};
-		69EF9B892E866A0C00D5AB9A /* App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = App;
+			path = pkmPhoneBook;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -66,7 +53,7 @@
 		693A11132E86643C0053A637 = {
 			isa = PBXGroup;
 			children = (
-				69EF9B652E86676200D5AB9A /* pkmPhoneBook */,
+				69EF9BC42E86875B00D5AB9A /* pkmPhoneBook */,
 				693A111D2E86643C0053A637 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,26 +64,6 @@
 				693A111C2E86643C0053A637 /* pkmPhoneBook.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		69EF9B5E2E86676200D5AB9A /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				69EF9B5D2E86676200D5AB9A /* MainViewController.swift */,
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
-		69EF9B652E86676200D5AB9A /* pkmPhoneBook */ = {
-			isa = PBXGroup;
-			children = (
-				69EF9B892E866A0C00D5AB9A /* App */,
-				69EF9B862E8667CC00D5AB9A /*  Resource */,
-				69EF9B6F2E8667AE00D5AB9A /* Model */,
-				69EF9B642E86676200D5AB9A /* View */,
-				69EF9B5E2E86676200D5AB9A /* Controller */,
-			);
-			path = pkmPhoneBook;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -113,11 +80,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				69EF9B6F2E8667AE00D5AB9A /* Model */,
-				69EF9B862E8667CC00D5AB9A /*  Resource */,
-				69EF9B892E866A0C00D5AB9A /* App */,
 			);
 			name = pkmPhoneBook;
 			packageProductDependencies = (
@@ -169,7 +131,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69EF9B6C2E86676200D5AB9A /* View in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,7 +141,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69EF9B682E86676200D5AB9A /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,7 +155,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "pkmPhoneBook/ Resource/Info.plist";
+				INFOPLIST_FILE = pkmPhoneBook/Resource/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -221,7 +181,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "pkmPhoneBook/ Resource/Info.plist";
+				INFOPLIST_FILE = pkmPhoneBook/Resource/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

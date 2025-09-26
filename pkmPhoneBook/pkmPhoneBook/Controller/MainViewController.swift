@@ -6,13 +6,83 @@ import UIKit
 import SnapKit
 
 class MainViewController: UIViewController {
+    
+
+  
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.text = "친구 목록"
+        label.font = .boldSystemFont(ofSize: 20)
+        return label
+    }()
+    private let addButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("추가", for: .normal)
+        button.setTitleColor(.gray, for: .normal)
+        return button
+    }()
+    private lazy var listTableView: UITableView = {
+       let tableView = UITableView()
+        tableView.backgroundColor = .white
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.id)
+        return tableView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .blue
+        configureUI()
+        setConstraints()
 
+    }
+    
+    private func configureUI() {
+        view.backgroundColor = .white
+        [
+            titleLabel,
+            addButton,
+            listTableView
+        ].forEach { view.addSubview($0) }
+    }
+    
+    private func setConstraints() {
+        titleLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(70)
+        }
+        addButton.snp.makeConstraints { make in
+            make.centerY.equalTo(titleLabel.snp.centerY)
+            make.trailing.equalToSuperview().offset(-20)
+        }
+        listTableView.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.leading.trailing.bottom.equalToSuperview().inset(20)
+            
+        }
     }
 
 
 }
 
+extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        80
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        20
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.id, for: indexPath) as? TableViewCell else {
+            return UITableViewCell()
+        }
+        cell.configureCell()
+        return cell
+    }
+    
+    
+    
+}
