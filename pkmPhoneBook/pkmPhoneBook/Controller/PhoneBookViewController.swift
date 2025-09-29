@@ -38,6 +38,7 @@ final class PhoneBookViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
         setConstraints()
+        setupNavigationBar()
     }
     
     private func configureUI() {
@@ -51,7 +52,7 @@ final class PhoneBookViewController: UIViewController {
     }
     
     private func setConstraints() {
-
+        
         profileImageView.snp.makeConstraints { make in
             make.width.height.equalTo(200)
             make.centerX.equalToSuperview()
@@ -74,12 +75,25 @@ final class PhoneBookViewController: UIViewController {
             make.top.equalTo(nameTextField.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
         }
- 
+        
     }
-    
+    // 내비게이션바 아이템 추가
+    private func setupNavigationBar() {
+        self.navigationItem.title = "연락처 추가"
+        let saveButton = UIBarButtonItem(title: "적용", style: .plain, target: self, action: #selector(didTappedSave))
+        
+        self.navigationItem.rightBarButtonItem = saveButton
+    }
+    // '랜덤 이미지 생성'버튼 액션
     @objc
     private func didTappedRandom() {
         print("랜덤 생성")
+    }
+    // '적용'버튼 액션
+    @objc
+    private func didTappedSave() {
+        print("적용 완료")
+        self.navigationController?.popViewController(animated: true)
     }
     
 }
