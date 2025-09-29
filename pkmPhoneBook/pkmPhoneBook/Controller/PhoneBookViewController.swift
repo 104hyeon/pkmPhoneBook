@@ -6,11 +6,12 @@ final class PhoneBookViewController: UIViewController {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .white
         imageView.layer.cornerRadius = 100
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.gray.cgColor
+        imageView.clipsToBounds = true          // 원 밖의 이미지 잘리게
         return imageView
     }()
     private lazy var randomButton: UIButton = {
@@ -75,8 +76,8 @@ final class PhoneBookViewController: UIViewController {
             make.top.equalTo(nameTextField.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
         }
-        
     }
+    
     // 내비게이션바 아이템 추가
     private func setupNavigationBar() {
         self.navigationItem.title = "연락처 추가"
@@ -88,12 +89,82 @@ final class PhoneBookViewController: UIViewController {
     @objc
     private func didTappedRandom() {
         print("랜덤 생성")
+
+        fetchData { [weak self] pokemon in
+            guard let self = self else { return }
+            guard let pokemon = pokemon else { return }
+            
+            if let urlSting = pokemon.sprites.frontDefault,
+               let url = URL(string: urlSting) {
+                URLSession.shared.dataTask(with: url) { (data, response, error) in
+                    
+                    guard let data = data else {
+                        print("이미지 데이터 없음")
+                        return
+                    }
+                    guard let image = UIImage(data: data) else {
+                        print("이미지 변환 실패")
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.profileImageView.image = image
+                    }
+                }.resume()
+            } else {
+                print("이미지 URL을 찾을 수 없음")
+            }
+        }
+
     }
     // '적용'버튼 액션
     @objc
     private func didTappedSave() {
         print("적용 완료")
         self.navigationController?.popViewController(animated: true)
+    }
+    
+}
+// fetchData 함수
+extension PhoneBookViewController {
+    
+    private func fetchData(completion: @escaping (PokemonData?) -> Void) {
+        
+        let randomID = Int.random(in: 1..<1010)
+        
+        // URL 구성요소
+        let scheme = "https"
+        let host = "pokeapi.co"
+        let path = "/api/v2/pokemon/\(randomID)"
+        
+        let method = "GET"
+        
+        // URL 만들기
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = host
+        components.path = path
+        
+        guard let url = components.url else { return }
+        
+        // request 만들기
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        
+        let session = URLSession(configuration: .default)
+        
+        session.dataTask(with: request) { (data, response, error) in
+            guard let data = data else { return }
+            
+            do {
+                let pokemon = try JSONDecoder().decode(PokemonData.self, from: data)
+                completion(pokemon)
+                
+            } catch {
+                print("데이터 에러")
+                completion(nil)
+            }
+        }.resume()
     }
     
 }
