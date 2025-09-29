@@ -6,9 +6,7 @@ import UIKit
 import SnapKit
 
 class MainViewController: UIViewController {
-    
 
-  
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -36,9 +34,8 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
         setConstraints()
-
-        
     }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
     }
@@ -72,19 +69,19 @@ class MainViewController: UIViewController {
         
 
     }
+    // '추가' 버튼 액션
     @objc
     private func buttonTapped(_ sender: UIButton) {
         self.navigationController?.pushViewController(PhoneBookViewController(), animated: true)
     }
-
-
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+    // 테이블뷰 셀 크기
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
     }
-    
+    // 테이블뷰 행 갯수 임시
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         20
     }

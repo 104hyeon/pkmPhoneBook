@@ -60,7 +60,7 @@ class TableViewCell: UITableViewCell {
             make.trailing.equalToSuperview().offset(-20)
         }
     }
-    
+    // 테이블뷰 셀 데이터 임시
     public func configureCell(
         image: UIImage? = nil,
         name: String = "name",
