@@ -16,10 +16,11 @@ class MainViewController: UIViewController {
         label.font = .boldSystemFont(ofSize: 20)
         return label
     }()
-    private let addButton: UIButton = {
+    private lazy var addButton: UIButton = {
         let button = UIButton()
         button.setTitle("추가", for: .normal)
         button.setTitleColor(.gray, for: .normal)
+        button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         return button
     }()
     private lazy var listTableView: UITableView = {
@@ -36,6 +37,10 @@ class MainViewController: UIViewController {
         configureUI()
         setConstraints()
 
+        
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
     }
     
     private func configureUI() {
@@ -45,22 +50,31 @@ class MainViewController: UIViewController {
             addButton,
             listTableView
         ].forEach { view.addSubview($0) }
+        
     }
     
     private func setConstraints() {
         titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(70)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
         addButton.snp.makeConstraints { make in
             make.centerY.equalTo(titleLabel.snp.centerY)
-            make.trailing.equalToSuperview().offset(-20)
+            make.trailing.equalToSuperview().inset(20)
+            make.width.equalTo(60)
+            make.height.equalTo(40)
         }
         listTableView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.top.equalTo(addButton.snp.bottom).offset(20)
             make.leading.trailing.bottom.equalToSuperview().inset(20)
             
         }
+        
+
+    }
+    @objc
+    private func buttonTapped(_ sender: UIButton) {
+        self.navigationController?.pushViewController(PhoneBookViewController(), animated: true)
     }
 
 

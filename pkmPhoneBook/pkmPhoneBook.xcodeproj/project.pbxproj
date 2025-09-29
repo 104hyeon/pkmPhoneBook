@@ -21,6 +21,7 @@
 				App/AppDelegate.swift,
 				App/SceneDelegate.swift,
 				Controller/MainViewController.swift,
+				Controller/PhoneBookViewController.swift,
 				View/TableViewCell.swift,
 			);
 			target = 693A111B2E86643C0053A637 /* pkmPhoneBook */;
