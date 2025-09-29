@@ -47,7 +47,6 @@ class MainViewController: UIViewController {
             addButton,
             listTableView
         ].forEach { view.addSubview($0) }
-        
     }
     
     private func setConstraints() {
@@ -64,11 +63,9 @@ class MainViewController: UIViewController {
         listTableView.snp.makeConstraints { make in
             make.top.equalTo(addButton.snp.bottom).offset(20)
             make.leading.trailing.bottom.equalToSuperview().inset(20)
-            
         }
-        
-
     }
+    
     // '추가' 버튼 액션
     @objc
     private func buttonTapped(_ sender: UIButton) {
@@ -93,7 +90,5 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configureCell()
         return cell
     }
-    
-    
-    
+ 
 }

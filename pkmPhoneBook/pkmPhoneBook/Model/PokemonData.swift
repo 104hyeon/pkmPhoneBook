@@ -1,6 +1,6 @@
 import Foundation
 
-struct PokemonDatas: Decodable {
+struct PokemonData: Decodable {
     let id: Int
     let name: String
     let height, weight: Int
@@ -8,7 +8,7 @@ struct PokemonDatas: Decodable {
 }
 
 struct Sprites: Decodable {
-    let frontDefault: String
+    let frontDefault: String?
 
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"
