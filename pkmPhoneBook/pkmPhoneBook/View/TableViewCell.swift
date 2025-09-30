@@ -7,11 +7,12 @@ class TableViewCell: UITableViewCell {
 
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .white
         imageView.layer.cornerRadius = 30
         imageView.layer.borderWidth = 2.0
         imageView.layer.borderColor = UIColor.gray.cgColor
+        imageView.clipsToBounds = true
         return imageView
     }()
     private let nameLabel: UILabel = {
@@ -60,22 +61,12 @@ class TableViewCell: UITableViewCell {
             make.trailing.equalToSuperview().offset(-20)
         }
     }
-    // 테이블뷰 셀 데이터 임시
-    public func configureCell(
-        image: UIImage? = nil,
-        name: String = "name",
-        phoneNumber: String = "010-1111-2222"
-    ) {
-//        guard let image = profileImageView.image else {
-//            return profileImageView.backgroundColor = .white
-//        }
-//                
-        profileImageView.image = image
-        nameLabel.text = name
-        phoneNumberLabel.text = phoneNumber
-        
+    // 테이블뷰 셀 데이터
+    public func configureCell(with contact: Contact) {
+        self.profileImageView.image = contact.image
+        self.nameLabel.text = contact.name
+        self.phoneNumberLabel.text = contact.phoneNumber
     }
-
 }
 
 

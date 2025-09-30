@@ -1,13 +1,13 @@
 import Foundation
 
-struct PokemonData: Decodable {
+struct PokemonData: Codable {
     let id: Int
     let name: String
     let height, weight: Int
     let sprites: Sprites
 }
 
-struct Sprites: Decodable {
+struct Sprites: Codable {
     let frontDefault: String?
 
     enum CodingKeys: String, CodingKey {
