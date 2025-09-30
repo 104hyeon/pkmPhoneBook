@@ -113,6 +113,15 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDat
         saveContacts()
         listTableView.reloadData()
     }
+    // 테이블뷰 셀을 선택했을 때 사용될 함수
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedContact = contactList[indexPath.row]
+        let phoneBookVC = PhoneBookViewController()
+        phoneBookVC.contactData = selectedContact
+                
+        self.navigationController?.pushViewController(phoneBookVC, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
     
     // UserDefault 저장 및 불러오기
     func saveContacts() {
