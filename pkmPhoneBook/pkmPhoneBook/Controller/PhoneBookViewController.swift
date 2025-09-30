@@ -2,9 +2,11 @@
 import UIKit
 import SnapKit
 
-final class PhoneBookViewController: UIViewController {
+class PhoneBookViewController: UIViewController {
     
-    private let profileImageView: UIImageView = {
+    weak var delegate: AddDataDelegate?
+    
+    let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .white
@@ -22,13 +24,13 @@ final class PhoneBookViewController: UIViewController {
         button.addTarget(self, action: #selector(didTappedRandom), for: .touchUpInside)
         return button
     }()
-    private let nameTextField: UITextField = {
+    let nameTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
         textField.autocapitalizationType = .none
         return textField
     }()
-    private let phoneTextField: UITextField = {
+    let phoneTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
         textField.autocapitalizationType = .none
@@ -85,6 +87,7 @@ final class PhoneBookViewController: UIViewController {
         
         self.navigationItem.rightBarButtonItem = saveButton
     }
+    
     // '랜덤 이미지 생성'버튼 액션
     @objc
     private func didTappedRandom() {
@@ -115,15 +118,24 @@ final class PhoneBookViewController: UIViewController {
                 print("이미지 URL을 찾을 수 없음")
             }
         }
-
-    }
-    // '적용'버튼 액션
-    @objc
-    private func didTappedSave() {
-        print("적용 완료")
-        self.navigationController?.popViewController(animated: true)
     }
     
+    // '적용'버튼 액션
+    @objc
+    private func didTappedSave(_ sender: UIButton) {
+        
+        guard let nameText = nameTextField.text, !nameText.isEmpty else { return }
+        guard let phoneText = phoneTextField.text, !phoneText.isEmpty else { return }
+        guard let profileImage = profileImageView.image else { return }
+        // Contact struct 내부 수정으로 image -> imageData로 변경
+        let profileData = profileImage.jpegData(compressionQuality: 1.0)
+        
+        let newContact = Contact(imageData: profileData, name: nameText, phoneNumber: phoneText)
+        
+        delegate?.addContact(contact: newContact)
+        
+        self.navigationController?.popViewController(animated: true)
+    }
 }
 // fetchData 함수
 extension PhoneBookViewController {

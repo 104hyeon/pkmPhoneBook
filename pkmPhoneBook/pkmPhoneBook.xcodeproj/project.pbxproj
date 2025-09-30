@@ -22,6 +22,8 @@
 				App/SceneDelegate.swift,
 				Controller/MainViewController.swift,
 				Controller/PhoneBookViewController.swift,
+				Model/AddDataDelegate.swift,
+				Model/Contact.swift,
 				Model/PokemonData.swift,
 				View/TableViewCell.swift,
 			);

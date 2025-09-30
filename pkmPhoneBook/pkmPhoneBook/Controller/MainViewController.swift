@@ -6,7 +6,10 @@ import UIKit
 import SnapKit
 
 class MainViewController: UIViewController {
-
+    
+    var contactList: [Contact] = []
+    let contactKey = "contactList"
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -18,7 +21,7 @@ class MainViewController: UIViewController {
         let button = UIButton()
         button.setTitle("추가", for: .normal)
         button.setTitleColor(.gray, for: .normal)
-        button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         return button
     }()
     private lazy var listTableView: UITableView = {
@@ -34,6 +37,7 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
         setConstraints()
+        loadContacts()
     }
     
     override func viewDidLayoutSubviews() {
@@ -47,6 +51,7 @@ class MainViewController: UIViewController {
             addButton,
             listTableView
         ].forEach { view.addSubview($0) }
+        
     }
     
     private func setConstraints() {
@@ -68,27 +73,65 @@ class MainViewController: UIViewController {
     
     // '추가' 버튼 액션
     @objc
-    private func buttonTapped(_ sender: UIButton) {
-        self.navigationController?.pushViewController(PhoneBookViewController(), animated: true)
+    private func buttonTapped() {
+        let phoneBookVC = PhoneBookViewController()
+        phoneBookVC.delegate = self
+        self.navigationController?.pushViewController(phoneBookVC, animated: true)
     }
 }
 
-extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDataDelegate {
     // 테이블뷰 셀 크기
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
     }
     // 테이블뷰 행 갯수 임시
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        20
+        contactList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.id, for: indexPath) as? TableViewCell else {
             return UITableViewCell()
         }
-        cell.configureCell()
+        let contact = contactList[indexPath.row]
+        
+        cell.configureCell(with: contact)
         return cell
     }
- 
+    
+    func addContact(contact: Contact) {
+        contactList.append(contact)
+        saveContacts()
+        listTableView.reloadData()
+    }
+    
+    // UserDefault 저장 및 불러오기
+    func saveContacts() {
+        do {
+            let encoded = try JSONEncoder().encode(contactList)
+            UserDefaults.standard.set(encoded, forKey: contactKey)
+            print("연락처 저장 성공")
+        } catch {
+            print("연락처 저장 실패")
+        }
+    }
+
+    func loadContacts() {
+        guard let savedData = UserDefaults.standard.data(forKey: contactKey) else {
+            print("저장된 데이터 없음")
+            return
+        }
+        do {
+            let decoded = try JSONDecoder().decode([Contact].self, from: savedData)
+            self.contactList = decoded
+            self.listTableView.reloadData()
+            print("연락처 불러오기 성공")
+            
+        } catch {
+            print("연락처 불러오기 실패:", error)
+        }
+    }
 }
+
+
