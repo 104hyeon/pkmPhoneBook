@@ -10,6 +10,7 @@ class MainViewController: UIViewController {
     var contactList: [Contact] = []
     let contactKey = "contactList"
     
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -38,6 +39,13 @@ class MainViewController: UIViewController {
         configureUI()
         setConstraints()
         loadContacts()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear")
+        contactList.sort {
+            ($0.name) < ($1.name)
+        }
     }
     
     override func viewDidLayoutSubviews() {
