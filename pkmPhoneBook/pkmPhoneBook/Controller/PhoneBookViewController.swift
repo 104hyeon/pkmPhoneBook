@@ -5,6 +5,8 @@ import SnapKit
 class PhoneBookViewController: UIViewController {
     
     weak var delegate: AddDataDelegate?
+    // mainView에서 가져온 데이터 선언
+    var contactData: Contact?
     
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -42,6 +44,11 @@ class PhoneBookViewController: UIViewController {
         configureUI()
         setConstraints()
         setupNavigationBar()
+        
+        if let contact = contactData {
+            receivedData(contact: contact)
+        } else {
+        }
     }
     
     private func configureUI() {
@@ -87,6 +94,15 @@ class PhoneBookViewController: UIViewController {
         
         self.navigationItem.rightBarButtonItem = saveButton
     }
+    
+    // main뷰에서 받은 데이터 넣는 함수
+    private func receivedData(contact: Contact) {
+        profileImageView.image = contact.image
+        nameTextField.text = contact.name
+        phoneTextField.text = contact.phoneNumber
+        self.navigationItem.title = contact.name
+    }
+    
     
     // '랜덤 이미지 생성'버튼 액션
     @objc
