@@ -47,6 +47,7 @@ class PhoneBookViewController: UIViewController {
         setConstraints()
         setupNavigationBar()
         
+        // 화면을 로드 할 때 contactData가 있으면 receivedData함수 실행
         if let contact = contactData {
             receivedData(contact: contact)
         } else {
@@ -113,7 +114,7 @@ class PhoneBookViewController: UIViewController {
         guard let profileImage = profileImageView.image else { return }
         // Contact struct 내부 수정으로 image -> imageData로 변경
         let profileData = profileImage.jpegData(compressionQuality: 1.0)
-        let newContact = Contact(imageData: profileData, name: nameText, phoneNumber: phoneText)
+        let newContact = Contact(id: UUID(), imageData: profileData, name: nameText, phoneNumber: phoneText)
         
         // 추가 or 수정 구분
         if let index = contactIndex {
@@ -157,9 +158,9 @@ class PhoneBookViewController: UIViewController {
             }
         }
     }
-    
 
 }
+
 // fetchData 함수
 extension PhoneBookViewController {
     

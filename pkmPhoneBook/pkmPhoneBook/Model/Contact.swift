@@ -3,6 +3,7 @@
 import UIKit
 
 struct Contact: Codable {
+    let id: UUID
     let imageData: Data?
     let name: String
     let phoneNumber: String

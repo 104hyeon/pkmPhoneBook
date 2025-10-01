@@ -4,11 +4,12 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 class MainViewController: UIViewController {
     
+    var container: NSPersistentContainer!
     var contactList: [Contact] = []
-    let contactKey = "contactList"
 
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -35,11 +36,15 @@ class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.container = appDelegate.persistentContainer
+        
         configureUI()
         setConstraints()
         loadContacts()
     }
-    // 이름 기준으로 가나다순 정렬
+    // 메인화면 띄울 때마다 이름 기준으로 가나다순 정렬
     override func viewWillAppear(_ animated: Bool) {
         print("viewWillAppear")
         contactList.sort {
@@ -85,8 +90,8 @@ class MainViewController: UIViewController {
         self.navigationController?.pushViewController(phoneBookVC, animated: true)
     }
 }
-
-extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDataDelegate {
+// 테이블뷰 관련
+extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 
     // 테이블뷰 셀 크기
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -96,7 +101,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDat
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         contactList.count
     }
-    
+    // 테이블뷰 셀에 데이터 표시
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.id, for: indexPath) as? TableViewCell else {
             return UITableViewCell()
@@ -106,19 +111,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDat
         cell.configureCell(with: contact)
         return cell
     }
-    // 추가 버튼 누를 때 사용되는 델리게이트 함수
-    func addContact(contact: Contact) {
-        contactList.append(contact)
-        saveContacts()
-        listTableView.reloadData()
-    }
-    // 셀 누르고 수정할 때 사용되는 델리게이트 함수
-    func editContact(contact: Contact, at index: Int) {
-        contactList[index] = contact
-        updateContacts()
-        listTableView.reloadData()
-    }
-    
     // 테이블뷰 셀을 선택했을 때 사용될 함수
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedContact = contactList[indexPath.row]
@@ -132,44 +124,92 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDat
         self.navigationController?.pushViewController(phoneBookVC, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
 }
-// UserDefault 저장 및 불러오기
-extension MainViewController {
+// Add델리게이트 관련
+extension MainViewController: AddDataDelegate {
     
-    func saveContacts() {
+    // 추가 버튼 누를 때 사용되는 델리게이트 함수
+    func addContact(contact: Contact) {
+        contactList.append(contact)
+        saveContacts(data: contact)
+        listTableView.reloadData()
+    }
+    // 셀 누르고 수정할 때 사용되는 델리게이트 함수
+    func editContact(contact: Contact, at index: Int) {
+        //  기존 데이터와 수정한 데이터 구분
+        let originalContact = contactList[index]
+        
+        updateContact(currentContact: originalContact, updateContact: contact)
+        contactList[index] = contact
+        
+        listTableView.reloadData()
+    }
+}
+
+// CoreData 데이터 관리
+extension MainViewController {
+     // creat
+    func saveContacts(data: Contact) {
+        guard let entity = NSEntityDescription.entity(forEntityName: "PkmPhoneBook", in: self.container.viewContext) else { return }
+        let newContact = NSManagedObject(entity: entity, insertInto: self.container.viewContext)
+        newContact.setValue(data.imageData, forKey: "profileImage")
+        newContact.setValue(data.name, forKey: "name")
+        newContact.setValue(data.phoneNumber, forKey: "phoneNumber")
+        newContact.setValue(data.id.uuidString, forKey: "contactID")
+        
         do {
-            let encoded = try JSONEncoder().encode(contactList)
-            UserDefaults.standard.set(encoded, forKey: contactKey)
+            try self.container.viewContext.save()
             print("연락처 저장 성공")
         } catch {
             print("연락처 저장 실패")
         }
     }
-
+    // read
     func loadContacts() {
-        guard let savedData = UserDefaults.standard.data(forKey: contactKey) else {
-            print("저장된 데이터 없음")
-            return
-        }
-        do {
-            let decoded = try JSONDecoder().decode([Contact].self, from: savedData)
-            self.contactList = decoded
-            self.listTableView.reloadData()
-            print("연락처 불러오기 성공")
+        
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "PkmPhoneBook")
+            guard let fetchedObjects = try? self.container.viewContext.fetch(fetchRequest) else { return }
             
-        } catch {
-            print("연락처 불러오기 실패:", error)
+            contactList.removeAll()
+            
+            for coreDataContact in fetchedObjects {
+                guard let name = coreDataContact.value(forKey: "name") as? String,
+                      let phoneNumber = coreDataContact.value(forKey: "phoneNumber") as? String,
+                      let idString = coreDataContact.value(forKey: "contactID") as? String,
+                      let contactUUID = UUID(uuidString: idString)
+                else { continue }
+                
+                let contact = Contact(
+                    id: contactUUID,
+                    imageData: coreDataContact.value(forKey: "profileImage") as? Data,
+                    name: name,
+                    phoneNumber: phoneNumber
+                )
+                contactList.append(contact)
+            }
+        listTableView.reloadData()
         }
-    }
-    
-    func updateContacts() {
+    // update
+    func updateContact(currentContact: Contact, updateContact: Contact) {
+        let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: "PkmPhoneBook")
+        let predicate = NSPredicate(format: "contactID == %@", currentContact.id.uuidString)
+        
+        fetchRequest.predicate = predicate
+        
         do {
-            let encoded = try JSONEncoder().encode(contactList)
-            UserDefaults.standard.set(encoded, forKey: contactKey)
-            print("연락처 수정 성공")
+            let result = try self.container.viewContext.fetch(fetchRequest)
+            
+            for data in result as [NSManagedObject] {
+                data.setValue(updateContact.imageData, forKey: "profileImage")
+                data.setValue(updateContact.name, forKey: "name")
+                data.setValue(updateContact.phoneNumber, forKey: "phoneNumber")
+                
+                try self.container.viewContext.save()
+                print("데이터 수정 완료")
+                 break
+            }
         } catch {
-            print("연락처 수정 실패")
+            print("데이터 수정 실패")
         }
     }
     
