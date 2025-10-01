@@ -7,6 +7,8 @@ class PhoneBookViewController: UIViewController {
     weak var delegate: AddDataDelegate?
     // mainView에서 가져온 데이터 선언
     var contactData: Contact?
+    // 수정 후 어느 인덱스 저장할지 알려주기 위해 변수 선언
+    var contactIndex: Int?
     
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -102,6 +104,26 @@ class PhoneBookViewController: UIViewController {
         phoneTextField.text = contact.phoneNumber
         self.navigationItem.title = contact.name
     }
+    // '적용'버튼 액션
+    @objc
+    private func didTappedSave(_ sender: UIButton) {
+        
+        guard let nameText = nameTextField.text, !nameText.isEmpty else { return }
+        guard let phoneText = phoneTextField.text, !phoneText.isEmpty else { return }
+        guard let profileImage = profileImageView.image else { return }
+        // Contact struct 내부 수정으로 image -> imageData로 변경
+        let profileData = profileImage.jpegData(compressionQuality: 1.0)
+        let newContact = Contact(imageData: profileData, name: nameText, phoneNumber: phoneText)
+        
+        // 추가 or 수정 구분
+        if let index = contactIndex {
+            delegate?.editContact(contact: newContact, at: index)
+        } else {
+            delegate?.addContact(contact: newContact)
+        }
+        
+        self.navigationController?.popViewController(animated: true)
+    }
     
     
     // '랜덤 이미지 생성'버튼 액션
@@ -136,22 +158,7 @@ class PhoneBookViewController: UIViewController {
         }
     }
     
-    // '적용'버튼 액션
-    @objc
-    private func didTappedSave(_ sender: UIButton) {
-        
-        guard let nameText = nameTextField.text, !nameText.isEmpty else { return }
-        guard let phoneText = phoneTextField.text, !phoneText.isEmpty else { return }
-        guard let profileImage = profileImageView.image else { return }
-        // Contact struct 내부 수정으로 image -> imageData로 변경
-        let profileData = profileImage.jpegData(compressionQuality: 1.0)
-        
-        let newContact = Contact(imageData: profileData, name: nameText, phoneNumber: phoneText)
-        
-        delegate?.addContact(contact: newContact)
-        
-        self.navigationController?.popViewController(animated: true)
-    }
+
 }
 // fetchData 함수
 extension PhoneBookViewController {

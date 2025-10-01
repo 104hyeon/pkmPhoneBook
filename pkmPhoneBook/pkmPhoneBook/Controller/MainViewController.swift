@@ -9,8 +9,7 @@ class MainViewController: UIViewController {
     
     var contactList: [Contact] = []
     let contactKey = "contactList"
-    
-    
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -40,7 +39,7 @@ class MainViewController: UIViewController {
         setConstraints()
         loadContacts()
     }
-    
+    // 이름 기준으로 가나다순 정렬
     override func viewWillAppear(_ animated: Bool) {
         print("viewWillAppear")
         contactList.sort {
@@ -59,7 +58,6 @@ class MainViewController: UIViewController {
             addButton,
             listTableView
         ].forEach { view.addSubview($0) }
-        
     }
     
     private func setConstraints() {
@@ -89,6 +87,7 @@ class MainViewController: UIViewController {
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDataDelegate {
+
     // 테이블뷰 셀 크기
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
@@ -107,23 +106,37 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDat
         cell.configureCell(with: contact)
         return cell
     }
-    
+    // 추가 버튼 누를 때 사용되는 델리게이트 함수
     func addContact(contact: Contact) {
         contactList.append(contact)
         saveContacts()
         listTableView.reloadData()
     }
+    // 셀 누르고 수정할 때 사용되는 델리게이트 함수
+    func editContact(contact: Contact, at index: Int) {
+        contactList[index] = contact
+        updateContacts()
+        listTableView.reloadData()
+    }
+    
     // 테이블뷰 셀을 선택했을 때 사용될 함수
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedContact = contactList[indexPath.row]
         let phoneBookVC = PhoneBookViewController()
         phoneBookVC.contactData = selectedContact
-                
+        // 데이터를 다시 전달 받기 위에 델리게이트 연결
+        phoneBookVC.delegate = self
+        // 인덱스 전달
+        phoneBookVC.contactIndex = indexPath.row
+        
         self.navigationController?.pushViewController(phoneBookVC, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    // UserDefault 저장 및 불러오기
+}
+// UserDefault 저장 및 불러오기
+extension MainViewController {
+    
     func saveContacts() {
         do {
             let encoded = try JSONEncoder().encode(contactList)
@@ -149,6 +162,17 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource, AddDat
             print("연락처 불러오기 실패:", error)
         }
     }
+    
+    func updateContacts() {
+        do {
+            let encoded = try JSONEncoder().encode(contactList)
+            UserDefaults.standard.set(encoded, forKey: contactKey)
+            print("연락처 수정 성공")
+        } catch {
+            print("연락처 수정 실패")
+        }
+    }
+    
 }
 
 
